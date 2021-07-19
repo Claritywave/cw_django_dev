@@ -85,7 +85,7 @@ class QuestionVoting(models.Model):
         on_delete=models.CASCADE,
     )
 
-    vote = models.BooleanField(null=False, blank=False)
+    like = models.BooleanField(null=False, blank=False)
 
     def __str__(self) -> str:
         return f"{ self.question } - { self.author } - { self.vote }"
