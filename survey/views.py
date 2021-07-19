@@ -15,7 +15,7 @@ class QuestionCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-
+        #add message of create and validation
         return super().form_valid(form)
 
 
@@ -30,7 +30,7 @@ def answer_question(request):
     print(request.POST)
     if not request.POST.get('question_pk'):
         return JsonResponse({'ok': False})
-    question = Question.objects.filter(pk=question_pk)[0]
+    question = Question.objects.get(pk=question_pk)
     answer = Answer.objects.get(question=question, author=request.user)
     answer.value = request.POST.get('value')
     answer.save()
