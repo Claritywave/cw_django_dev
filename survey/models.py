@@ -18,7 +18,7 @@ class Question(models.Model):
     description = models.TextField("Description")
     question_voting = models.ManyToManyField(
         to=get_user_model(),
-        through="QuestionVoting",
+        through="QuestionLike",
         blank=False,
         related_name="company_users",
     )
@@ -67,20 +67,20 @@ class Answer(models.Model):
         return f"{ self.question } - { self.author }"
 
 
-class QuestionVoting(models.Model):
+class QuestionLike(models.Model):
     """
-    QuestionVoting model
+    QuestionLike model
     """
 
     author = models.ForeignKey(
         to=get_user_model(),
-        related_name="voting_user",
+        related_name="user_like",
         verbose_name="User",
         on_delete=models.CASCADE,
     )
-    quetion = models.ForeignKey(
+    question = models.ForeignKey(
         to="Question",
-        related_name="question_vote",
+        related_name="question_like",
         verbose_name="Question",
         on_delete=models.CASCADE,
     )
@@ -88,4 +88,4 @@ class QuestionVoting(models.Model):
     like = models.BooleanField(null=False, blank=False)
 
     def __str__(self) -> str:
-        return f"{ self.question } - { self.author } - { self.vote }"
+        return f"{ self.question } - { self.author } - { self.like }"
