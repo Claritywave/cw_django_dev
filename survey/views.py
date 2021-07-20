@@ -3,16 +3,20 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 from survey.models import Question, Answer, QuestionLike
 from django.db.models import Q
+from django.urls import reverse_lazy
 
 
 class QuestionListView(ListView):
     model = Question
+    def get_queryset(self):
+        return super().get_queryset()[:20]
 
 
 class QuestionCreateView(CreateView):
     model = Question
     fields = ["title", "description"]
     redirect_url = ""
+    success_url = reverse_lazy('survey:question-list')
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -24,6 +28,7 @@ class QuestionUpdateView(UpdateView):
     model = Question
     fields = ["title", "description"]
     template_name = "survey/question_form.html"
+    success_url = reverse_lazy('survey:question-list')
 
 
 def answer_question(request):

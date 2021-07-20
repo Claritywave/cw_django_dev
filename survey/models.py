@@ -38,7 +38,7 @@ class Question(TimeStampedModel):
     question_voting = models.ManyToManyField(
         to=get_user_model(),
         through="QuestionLike",
-        blank=False,
+        blank=True,
         related_name="company_users",
     )
 
@@ -53,7 +53,7 @@ class Question(TimeStampedModel):
         likes = self.question_like.filter(like=True).count()
         dislike = self.question_like.filter(like=False).count()
         answers = self.question_answers.all().count()
-        created_today = 10 if self.created_on.date() < datetime.today().date() else 0
+        created_today = 10 if self.created_on.date() == datetime.today().date() else 0
         return (answers * 10) + (likes * 5) - (dislike * 3) + created_today
 
     @property
