@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from datetime import datetime
+from .utils import get_current_request
+from django.db.models import Q
 
 
 class TimeStampedModel(models.Model):
@@ -51,8 +53,20 @@ class Question(TimeStampedModel):
         likes = self.question_like.filter(like=True).count()
         dislike = self.question_like.filter(like=False).count()
         answers = self.question_answers.all().count()
-        created_today = 10 if self.created_on.date() == datetime.today().date() else 0
+        created_today = 10 if self.created_on.date() < datetime.today().date() else 0
         return (answers * 10) + (likes * 5) - (dislike * 3) + created_today
+
+    @property
+    def user_likes(self):
+        request = get_current_request()
+        if request.user.is_anonymous:
+            return None
+        try:
+            return QuestionLike.objects.get(
+                Q(author=request.user) & Q(question__id=self.id)
+            ).like
+        except Exception:
+            return None
 
 
 class Answer(TimeStampedModel):
