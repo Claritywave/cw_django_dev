@@ -41,8 +41,9 @@
             </div>
          </div>
       </div>
+      </br>
       {% for answer in question.question_answers.all %}
-      <div class="card col12">
+      <div class="card col12" style="padding: 10px;">
          <div class="d-flex flex-column col-4">
             <u class="fw-lighter mb-1">Respuesta de <b>{{ answer.author.username }}</b>.</u>
             <div>
@@ -60,6 +61,10 @@
          </div>
       </div>
       {% endfor %}
+      </br>
+         <div class="d-grid gap-2">
+         <button class="btn btn-primary" type="button">Agregar Respuesta</button>
+         </div>
    </div>
    {% empty %}
    <div>No hay preguntas.</div>
