@@ -1,9 +1,26 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from datetime import datetime
 
 
-class Question(models.Model):
+class TimeStampedModel(models.Model):
+    """TimeStampedModel
+    TimeStampedModel acts as an abstract base class from which every
+    other model in the project will inherit. This class provides
+    every table with the following attributes:
+        + created_at (DateTime): Store the datetime the object was created.
+        + modified_on (DateTime): Store the last datetime the object was modified.
+    """
+
+    updated_at = models.DateTimeField(auto_now=True, null=False, blank=False)
+    created_on = models.DateTimeField(auto_now_add=True, null=False, blank=False)
+
+    class Meta:
+        abstract = True
+
+
+class Question(TimeStampedModel):
     """
     Question model
     """
@@ -29,8 +46,16 @@ class Question(models.Model):
     def __str__(self) -> str:
         return self.title
 
+    @property
+    def ranking(self):
+        likes = self.question_like.filter(like=True).count()
+        dislike = self.question_like.filter(like=False).count()
+        answers = self.question_answers.all().count()
+        created_today = 10 if self.created_on.date() == datetime.today().date() else 0
+        return (answers * 10) + (likes * 5) - (dislike * 3) + created_today
 
-class Answer(models.Model):
+
+class Answer(TimeStampedModel):
     """
     Answer model
     """
@@ -67,7 +92,7 @@ class Answer(models.Model):
         return f"{ self.question } - { self.author }"
 
 
-class QuestionLike(models.Model):
+class QuestionLike(TimeStampedModel):
     """
     QuestionLike model
     """
